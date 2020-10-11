@@ -1,0 +1,35 @@
+export const bookI18N: Map<string, string> = new Map([
+    ["self", "Buch",],
+    ["key", "Schlüssel",],
+    ["author", "Autor",],
+    ["category", "Kategorie",],
+    ["isbn", "ISBN",],
+    ["number", "Nummer",],
+    ["publisher", "Verlag",],
+    ["shorthand", "Etikett",],
+    ["title", "Titel"],
+])
+export const userI18N: Map<string, string> = new Map([
+    ["self", "Benutzer*in"],
+    ["key", "Schlüssel"],
+    ["firstname", "Vorname"],
+    ["lastname", "Nachname"],
+    ["clazz", "Klasse"],
+    ["_class", "Klasse"],
+])
+export const borrowingUserI18N: Map<string, string> = new Map([
+    ["start_date", "Ausleihdatum"],
+    ["expiration_date", "Rückgabefrist"],
+    ["return_date", "Rückgabedatum"],
+    ["firstname", "Vorname"],
+    ["lastname", "Nachname"],
+    ["clazz", "Klasse"],
+    ["key", "Schlüssel",],
+    ["author", "Autor",],
+    ["category", "Kategorie",],
+    ["isbn", "ISBN",],
+    ["number", "Nummer",],
+    ["publisher", "Verlag",],
+    ["shorthand", "Etikett",],
+    ["title", "Titel"],
+])
