@@ -1,9 +1,8 @@
+import { Button, Input, Space } from "antd";
 import CSS from "csstype";
 import React from "react";
 import { DefaultBibler } from "../../apis";
-import { bookI18N } from "../../i18n";
 import { Book, BookFromJSON } from "../../models/Book";
-import { inputStyle, textDarkStyle } from "../../style";
 
 const api = new DefaultBibler()
 type addBookFormState = {
@@ -49,14 +48,27 @@ export class AddBookForm extends React.Component<IAddBookForm, addBookFormState>
         const capitalize = (s: string | undefined): string | undefined => s ? s.replace(/^\w/, (c) => c.toUpperCase()) : s;
         return <div className="borrow-form-workflow">
             <form style={formStyle}>
-                <input id="book-key" name="book-key" style={hiddenInputStyle}></input>
-                {Object.keys(record)
-                    .filter(el => el != "key")
-                    .map(el => <div key={el}>
-                        <label htmlFor={el} style={textDarkStyle}>{capitalize(bookI18N.get(el))}</label><br></br>
-                        <input name={`book-${el}`} id={el} type="text" placeholder={capitalize(bookI18N.get(el))} style={inputStyle}>
-                        </input><br></br>
-                    </div>)}
+                <Space direction="vertical">
+                    <h1>Buch hinzufügen</h1>
+                    <input id="book-key" name="book-key" style={hiddenInputStyle}></input>
+                    <label>Titel</label>
+                    <Input placeholder="Titel"></Input>
+                    <label>Autor</label>
+                    <Input placeholder="Autor"></Input>
+                    <label>Kategorie</label>
+                    <Input placeholder="Kategorie"></Input>
+                    <label>Verlag</label>
+                    <Input placeholder="Verlag"></Input>
+                    <label>Kürzel</label>
+                    <Input placeholder="Kürzel"></Input>
+                    <label>Nummer</label>
+                    <Input placeholder="Nummer"></Input>
+                    <label>Etikett</label>
+                    <Input placeholder="Etikett"></Input>
+                    <label>ISBN</label>
+                    <Input placeholder="ISBN"></Input>
+                    <Button type="primary">Speichern</Button>
+                </Space>
             </form>
 
         </div>

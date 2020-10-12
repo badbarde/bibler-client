@@ -260,6 +260,32 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * Get Stats
+     */
+    async getStatsStatsBooksBorrowedGetRaw(): Promise<runtime.ApiResponse<object>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/stats/books/borrowed`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Get Stats
+     */
+    async getStatsStatsBooksBorrowedGet(): Promise<object> {
+        const response = await this.getStatsStatsBooksBorrowedGetRaw();
+        return await response.value();
+    }
+
+    /**
      * get users
      * Get Users
      */

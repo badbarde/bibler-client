@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { DefaultBibler } from "../../apis/DefaultBibler";
 import { userI18N } from "../../i18n";
 import { BookFromJSON, UserFromJSON } from "../../models";
+import { searchFilterSubject } from "../Menu";
 
 
 export interface IUsersTable {
@@ -15,6 +16,7 @@ type Record = {
 }
 type TableState = {
     data?: Array<Record>,
+    filteredData?: Array<Record>,
     insertRecord?: Record
     selectedRecord?: Record[]
 }
@@ -27,6 +29,14 @@ export class UsersTable extends React.Component<IUsersTable> {
     state: TableState = {
         data: [],
     }
+    searchFilterSub = searchFilterSubject.subscribe(search => {
+        console.log("filtering by: " + search)
+        const regex = new RegExp(".*" + search + ".*")
+        const filterdData = this.state.data?.filter(e => regex.test(Object.values(e)[0].toString()))
+        this.setState({
+            filterdData: filterdData
+        })
+    })
     loadData = async (): Promise<void> => {
         const data = await api.getUsersUsersGet()
         console.log(data)
@@ -36,6 +46,9 @@ export class UsersTable extends React.Component<IUsersTable> {
     }
     async componentDidMount(): Promise<void> {
         await this.loadData()
+    }
+    componentWillUnmount() {
+        this.searchFilterSub.unsubscribe()
     }
     handleRecordClick = (event: SyntheticEvent, index: number | undefined): void => {
         console.log("books table record clicked")
@@ -85,18 +98,18 @@ export class UsersTable extends React.Component<IUsersTable> {
         console.log("rightlick on " + event.target)
     }
     render(): JSX.Element {
-        const { data } = this.state
+        const { filteredData } = this.state
         let cols
-        if (data != null && data.length > 0) {
-            console.log(data)
-            cols = Object.keys(data[0]).map(el => ({
+        if (filteredData != null && filteredData.length > 0) {
+            console.log(filteredData)
+            cols = Object.keys(filteredData[0]).map(el => ({
                 title: userI18N.get(el),
                 dataIndex: el,
                 key: el,
                 //render: (text: string) => <a>{text}</a>,
             }))
         }
-        return <Table columns={cols} dataSource={data} onRow={(record, rowIndex) => {
+        return <Table columns={cols} dataSource={filteredData} onRow={(record, rowIndex) => {
             return {
                 onDoubleClick: event => this.handleRecordClick(event, rowIndex),
                 onClick: event => this.handleRecordClick(event, rowIndex),

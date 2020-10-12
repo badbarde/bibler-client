@@ -4,10 +4,13 @@ import React, { ReactElement } from "react";
 import { GiBackwardTime, GiBookCover, GiBookPile } from "react-icons/gi";
 import { HiUserAdd } from 'react-icons/hi';
 import { ActionBar } from "./components/ActionBar";
+import { AddBookForm } from './components/Book/AddBookForm';
 import { BooksView } from './components/Book/BooksView';
 import { BorrowingUsersTable } from "./components/BorrowingUsersTable";
 import { MainContentTypes } from './components/MainContentTypes';
 import { Menu } from './components/Menu';
+import { StatusBar } from './components/StatusBar';
+import { AddUserForm } from './components/User/AddUserForm';
 import { UsersView } from './components/User/UsersView';
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -30,7 +33,7 @@ export class Bibler extends React.Component {
                 action: (e: any): void => {
                     console.log(e)
                     this.setState({
-                        mainContent: <BooksView key="BooksView"></BooksView>
+                        mainContent: <BooksView key={Date.now()}></BooksView>
                     })
                 }
             },
@@ -40,7 +43,7 @@ export class Bibler extends React.Component {
                 action: (e: any): void => {
                     console.log(e)
                     this.setState({
-                        mainContent: <UsersView key="UserList"></UsersView>
+                        mainContent: <UsersView key={Date.now()}></UsersView>
                     })
                 }
             },
@@ -50,7 +53,7 @@ export class Bibler extends React.Component {
                 action: (e: any): void => {
                     console.log(e)
                     this.setState({
-                        mainContent: <BorrowingUsersTable key="BorrowingUsersTable"></BorrowingUsersTable>
+                        mainContent: <BorrowingUsersTable key={Date.now()}></BorrowingUsersTable>
                     })
                 }
             },
@@ -59,6 +62,9 @@ export class Bibler extends React.Component {
                 name: "Buch hinzufügen",
                 action: (e: any): void => {
                     console.log("Buch hinzufügen")
+                    this.setState({
+                        mainContent: <AddBookForm key={Date.now()}></AddBookForm>
+                    })
                 },
             },
             {
@@ -66,6 +72,9 @@ export class Bibler extends React.Component {
                 name: "Beutzer*in hinzufügen",
                 action: (e: any): void => {
                     console.log("Beutzer*in hinzufügen")
+                    this.setState({
+                        mainContent: <AddUserForm key={Date.now()}></AddUserForm>
+                    })
                 }
             },
         ]
@@ -79,7 +88,7 @@ export class Bibler extends React.Component {
                 </Sider>
                 <Content >{mainContent}</Content>
             </Layout>
-            <Footer>Footer</Footer>
+            <Footer style={{ padding: ".3rem" }}><StatusBar></StatusBar></Footer>
         </Layout>
 
     }

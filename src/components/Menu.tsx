@@ -9,7 +9,7 @@ const { Search } = Input;
 
 export const viewTypeSubject = new Subject<ViewTypes>()
 
-export const searchFilterSubject = new Subject<ViewTypes>()
+export const searchFilterSubject = new Subject<string>()
 
 export class Menu extends React.Component {
     state = {
@@ -34,9 +34,11 @@ export class Menu extends React.Component {
     onSearchChanged = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const searchString = event.target.value
         console.log(`changes: ${searchString}`)
+        searchFilterSubject.next(searchString)
     }
     onSearch = (searchString: string) => {
         console.log(`seaching for: ${searchString}`)
+        searchFilterSubject.next(searchString)
     }
 
     render(): React.ReactNode {
