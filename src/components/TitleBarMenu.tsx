@@ -2,18 +2,18 @@ import { AppstoreOutlined, TableOutlined } from '@ant-design/icons';
 import { Button, Input, PageHeader, Space } from "antd";
 import React from "react";
 import { GiBookshelf } from "react-icons/gi";
-import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { ViewTypes } from "./ViewTypes";
 const { Search } = Input;
 
 
-export const viewTypeSubject = new Subject<ViewTypes>()
+export const viewTypeSubject = new BehaviorSubject<ViewTypes>(ViewTypes.CARD)
 
-export const searchFilterSubject = new Subject<string>()
+export const searchFilterSubject = new BehaviorSubject<string>("")
 
-export class Menu extends React.Component {
+export class TitleBarMenu extends React.Component {
     state = {
-        showAsTable: false,
+        showAsTable: true,
         title: "Bibler",
         subtitle: "Bücherei App"
     }
@@ -36,7 +36,7 @@ export class Menu extends React.Component {
         console.log(`changes: ${searchString}`)
         searchFilterSubject.next(searchString)
     }
-    onSearch = (searchString: string) => {
+    onSearch = (searchString: string): void => {
         console.log(`seaching for: ${searchString}`)
         searchFilterSubject.next(searchString)
     }

@@ -3,7 +3,8 @@ import React, { SyntheticEvent } from "react";
 import { Subject } from "rxjs";
 import { DefaultBibler } from "../../apis/DefaultBibler";
 import { userI18N } from "../../i18n";
-import { BookFromJSON, UserFromJSON } from "../../models";
+import { ExtendedUser } from "./UserCards";
+import { UsersTable } from "./UsersTable";
 
 
 export interface IUserSelectTable {
@@ -14,7 +15,7 @@ type Record = {
     [index: string]: string | number
 }
 type TableState = {
-    data?: Array<Record>,
+    data?: Array<ExtendedUser>,
     insertRecord?: Record
     selectedRecord?: Record[]
 }
@@ -23,15 +24,15 @@ const api = new DefaultBibler()
 export const userSelectTableSubject = new Subject<Record[]>()
 const publish = (data: Record[]) => userSelectTableSubject.next(data)
 
-export class UserSelectTable extends React.Component<IUserSelectTable> {
+export class UserSelectTable extends UsersTable {
     state: TableState = {
         data: [],
     }
     loadData = async (): Promise<void> => {
-        const data = await api.getUsersUsersGet()
+        const data = (await api.getUsersUsersGet()) as Array<[Record, number]>
         console.log(data)
         this.setState({
-            data: data
+            data: data.map((el: any) => ({ user: el[0], borrowed_books: el[1] }))
         })
     }
     async componentDidMount(): Promise<void> {
@@ -59,23 +60,6 @@ export class UserSelectTable extends React.Component<IUserSelectTable> {
             insertRecord: insertRecord
         })
     }
-    insertRecord = async (): Promise<void> => {
-        const { insertRecord, data } = this.state
-        if (insertRecord != null) {
-            console.log(insertRecord)
-            try {
-                const response = await api.putUserUserPut({ user: UserFromJSON(insertRecord) })
-                console.log(response)
-                data?.unshift(BookFromJSON(insertRecord) as unknown as Record)
-                this.setState({
-                    data: data
-                })
-            } catch (e) {
-                console.log(e)
-            }
-
-        }
-    }
     handleRightClickRecord = (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>): void => {
         event.preventDefault()
         console.log("rightlick on " + event.target)
@@ -96,7 +80,7 @@ export class UserSelectTable extends React.Component<IUserSelectTable> {
             type: "radio",
             onChange: (selectedRowKeys, selectedRows) => {
                 console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-                publish(selectedRows)
+                publish([selectedRows[0].user as unknown as Record])
                 this.setState({
                     selectedRecord: selectedRows
                 })

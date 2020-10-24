@@ -1,10 +1,18 @@
 import { Menu } from 'antd';
 import React, { ReactNode } from "react";
-
+// Copied from antd since its not importable
+export interface MenuInfo {
+    key: React.Key;
+    keyPath: React.Key[];
+    item: React.ReactInstance;
+    domEvent: React.MouseEvent<HTMLElement>;
+}
+// Copied from antd since its not importable
+export declare type MenuClickEventHandler = (info: MenuInfo) => void;
 export interface Action {
     name: string,
     icon?: ReactNode,
-    action: (event: any) => void,
+    action: (info: MenuInfo) => void,
 }
 export interface IActionBar {
     actions: Array<Action>

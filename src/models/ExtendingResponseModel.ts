@@ -14,48 +14,48 @@
 
 import { exists, mapValues } from '../runtime';
 import {
-    BorrowResponseStatus,
-    BorrowResponseStatusFromJSON,
-    BorrowResponseStatusFromJSONTyped,
-    BorrowResponseStatusToJSON,
+    ExtendingResponseStatus,
+    ExtendingResponseStatusFromJSON,
+    ExtendingResponseStatusFromJSONTyped,
+    ExtendingResponseStatusToJSON,
 } from './';
 
 /**
- * Response model for borrowing a book
+ * Response model for extending a book borrowing period
  * @export
- * @interface BorrowResponseModel
+ * @interface ExtendingResponseModel
  */
-export interface BorrowResponseModel {
+export interface ExtendingResponseModel {
     /**
      * 
-     * @type {BorrowResponseStatus}
-     * @memberof BorrowResponseModel
+     * @type {ExtendingResponseStatus}
+     * @memberof ExtendingResponseModel
      */
-    status: BorrowResponseStatus;
+    status: ExtendingResponseStatus;
     /**
      * 
      * @type {Date}
-     * @memberof BorrowResponseModel
+     * @memberof ExtendingResponseModel
      */
     returnDate?: Date;
 }
 
-export function BorrowResponseModelFromJSON(json: any): BorrowResponseModel {
-    return BorrowResponseModelFromJSONTyped(json, false);
+export function ExtendingResponseModelFromJSON(json: any): ExtendingResponseModel {
+    return ExtendingResponseModelFromJSONTyped(json, false);
 }
 
-export function BorrowResponseModelFromJSONTyped(json: any, ignoreDiscriminator: boolean): BorrowResponseModel {
+export function ExtendingResponseModelFromJSONTyped(json: any, ignoreDiscriminator: boolean): ExtendingResponseModel {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'status': BorrowResponseStatusFromJSON(json['status']),
+        'status': ExtendingResponseStatusFromJSON(json['status']),
         'returnDate': !exists(json, 'return_date') ? undefined : (new Date(json['return_date'])),
     };
 }
 
-export function BorrowResponseModelToJSON(value?: BorrowResponseModel | null): any {
+export function ExtendingResponseModelToJSON(value?: ExtendingResponseModel | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -64,7 +64,7 @@ export function BorrowResponseModelToJSON(value?: BorrowResponseModel | null): a
     }
     return {
         
-        'status': BorrowResponseStatusToJSON(value.status),
+        'status': ExtendingResponseStatusToJSON(value.status),
         'return_date': value.returnDate === undefined ? undefined : (value.returnDate.toISOString().substr(0,10)),
     };
 }

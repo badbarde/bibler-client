@@ -1,11 +1,12 @@
 import React from "react";
 import { Subscription } from "rxjs";
-import { Book, User } from "../..";
+import { Book } from "../..";
+import { User } from "../../models/User";
 import { BookItem } from "../Book/BookItem";
 import { BooksTable, booksTableSubject } from "../Book/BooksTable";
-import { viewTypeSubject } from "../Menu";
+import { viewTypeSubject } from "../TitleBarMenu";
 import { ViewTypes } from "../ViewTypes";
-import { UserCards } from "./UserCards";
+import { ExtendedUser, UserCards, userCardsSubject } from "./UserCards";
 import { UsersTable, userTableSubject } from "./UsersTable";
 
 
@@ -16,32 +17,50 @@ interface BookViewState {
 }
 export class UsersView extends React.Component {
     state: BookViewState = {
-        bookViewType: ViewTypes.TABLE,
+        bookViewType: ViewTypes.CARD,
         selectedUser: null,
         selectedBook: null
     }
-    viewTypeSub: Subscription = viewTypeSubject.subscribe(viewType => {
-        console.log("change vietype to: " + viewType)
-        this.setState({
-            bookViewType: viewType
+    viewTypeSub: Subscription | null = null
+    usersTableSub: Subscription | null = null
+    usersCardsSub: Subscription | null = null
+    bookTableSub: Subscription | null = null
+    componentDidMount(): void {
+        this.viewTypeSub = viewTypeSubject.subscribe(viewType => {
+            console.log("change vietype to: " + viewType)
+            this.setState({
+                bookViewType: viewType
+            })
         })
-    })
-    usersTableSub: Subscription = userTableSubject.subscribe(user => {
-        console.log("selected " + user[0].key)
-        this.setState({
-            selectedUser: user[0]
+        this.usersTableSub = userTableSubject.subscribe(user => {
+            console.log("selected " + user[0].key)
+            this.setState({
+                selectedUser: user[0]
+            })
         })
-    })
-    bookTableSub: Subscription = booksTableSubject.subscribe(book => {
-        console.log("selected " + book.title)
-        this.setState({
-            selectedBook: book
+        this.usersCardsSub = userCardsSubject.subscribe((user: ExtendedUser) => {
+            console.log("selected " + user.user.key)
+            this.setState({
+                selectedUser: user.user
+            })
         })
-    })
+        this.bookTableSub = booksTableSubject.subscribe(book => {
+            console.log("selected " + book.title)
+            this.setState({
+                selectedBook: book
+            })
+        })
+    }
     componentWillUnmount(): void {
-        this.viewTypeSub.unsubscribe()
-        this.usersTableSub.unsubscribe()
-        this.bookTableSub.unsubscribe()
+        if (this.viewTypeSub != null) {
+            this.viewTypeSub.unsubscribe()
+        }
+        if (this.usersTableSub != null) {
+            this.usersTableSub.unsubscribe()
+        }
+        if (this.bookTableSub != null) {
+            this.bookTableSub.unsubscribe()
+        }
     }
     render(): JSX.Element {
         const { bookViewType, selectedUser, selectedBook } = this.state

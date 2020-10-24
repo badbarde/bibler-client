@@ -73,7 +73,7 @@ export interface Book {
      * @type {string}
      * @memberof Book
      */
-    isbn: string;
+    isbn?: string;
     /**
      * 
      * @type {Media}
@@ -99,7 +99,7 @@ export function BookFromJSONTyped(json: any, ignoreDiscriminator: boolean): Book
         'number': json['number'],
         'shorthand': json['shorthand'],
         'category': json['category'],
-        'isbn': json['isbn'],
+        'isbn': !exists(json, 'isbn') ? undefined : json['isbn'],
         'media': !exists(json, 'media') ? undefined : MediaFromJSON(json['media']),
     };
 }

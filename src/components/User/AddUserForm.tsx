@@ -2,7 +2,8 @@ import { Button, Input, message, Space } from "antd";
 import CSS from "csstype";
 import React from "react";
 import { DefaultBibler } from "../../apis";
-import { User, UserFromJSON } from "../../models";
+import { UserInFromJSON } from "../../models";
+import { User } from "../../models/User";
 
 const api = new DefaultBibler()
 type addUserFormState = {
@@ -29,7 +30,7 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
         this.setState({
             loading: true
         })
-        const response = await api.putUserUserPut({ user: UserFromJSON(record) })
+        const response = await api.putUserUserPut({ userIn: UserInFromJSON(record) })
         console.log(response)
         setTimeout(() => this.setState({
             loading: false,
@@ -37,7 +38,7 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
                 lastname: "",
                 firstname: "",
                 key: 0,
-                _class: ""
+                classname: ""
             }
         }), 1000)
     }
@@ -48,9 +49,9 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
             display: "none"
 
         }
-        return <div className="borrow-form-workflow" style={{ padding: "1rem" }}>
+        return <div style={{ padding: "1rem" }}>
             <Space direction="vertical">
-                <h1>Benutzer*in hinzufügen</h1>
+                <h1 style={{ fontSize: "2rem" }}>Benutzer hinzufügen</h1>
                 <input id="book-key" name="book-key" style={hiddenInputStyle} value={this.state.record.key}></input>
                 <label>Vorname</label>
                 <Input placeholder="Vorname" value={this.state.record.firstname}
@@ -69,14 +70,14 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
                     }
                     } ></Input>
                 <label>Klasse</label>
-                <Input placeholder="Klasse" value={this.state.record._class}
+                <Input placeholder="Klasse" value={this.state.record.classname}
                     onChange={(e) => {
                         const { record } = this.state
-                        record._class = e.target.value
+                        record.classname = e.target.value
                         this.setState({ record: record })
                     }
                     } ></Input>
-                <Button type="primary" loading={this.state.loading} onClick={this.save}>Speichern</Button>
+                <Button type="primary" size="large" shape="round" loading={this.state.loading} onClick={this.save}>Speichern</Button>
             </Space>
         </div>
     }

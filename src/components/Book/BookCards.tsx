@@ -1,11 +1,14 @@
 import { Empty, Pagination } from 'antd';
 import React from "react";
+import { Subscription } from 'rxjs';
 import { DefaultBibler } from "../../apis/DefaultBibler";
 import { Book } from "../../models/Book";
 import { User } from '../../models/User';
+import { searchFilterSubject } from '../TitleBarMenu';
 import { BookCard } from './BookCard';
 type BookCardsState = {
     data?: Array<Book>,
+    filteredData?: Array<Book>,
     insertRecord?: Book,
     page: number,
     pageSize: number,
@@ -23,21 +26,37 @@ export class BookCards extends React.Component<IBookCards> {
     state: BookCardsState = {
         data: [],
         page: 1,
-        pageSize: 12
+        pageSize: 12,
+        filteredData: []
     }
-
+    searchFilterSub: Subscription | null = null
     loadData = async (): Promise<void> => {
-        const data = await api.getBooksBooksGet({ userKey: this.props.userFilter?.key })
+        const data = await api.getBooksBooksGet({})
         console.log(data)
         this.setState({
-            data: data
+            data: data,
+            filteredData: data
         })
     }
     async componentDidMount(): Promise<void> {
         await this.loadData()
+        this.searchFilterSub = searchFilterSubject.subscribe((search: string) => {
+            console.log("filtering by: " + search)
+            const regex = new RegExp(".*" + search + ".*")
+            const filterdData = this.state.data?.filter(e => Object.values(e)
+                .some(i => i != null ? regex.test(i.toString()) : false))
+            console.log("filterd books", filterdData)
+            this.setState({
+                filteredData: filterdData
+            })
+        })
+    }
+    componentWillUnmount(): void {
+        this.searchFilterSub?.unsubscribe()
     }
     render(): JSX.Element {
-        if (this.state.data) {
+        if (this.state.filteredData != null) {
+
             return <div>
                 <div style={{
                     marginLeft: "1rem",
@@ -47,7 +66,7 @@ export class BookCards extends React.Component<IBookCards> {
                     gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))"
                 }
                 }>
-                    {this.state.data.slice(this.state.page, this.state.page + this.state.pageSize).map(el =>
+                    {this.state.filteredData.slice(this.state.page - 1, this.state.page + this.state.pageSize).map(el =>
                         <BookCard key={"book-card" + el.key} book={el}></BookCard>
                     )}
 
@@ -57,7 +76,7 @@ export class BookCards extends React.Component<IBookCards> {
                     justifyContent: "flex-end"
                 }}>
                     <Pagination style={{
-                    }} defaultCurrent={1} current={this.state.page} onChange={(page, pageSize) => this.setState({ page: page, pageSize: pageSize })} total={this.state.data.length} />
+                    }} defaultCurrent={1} current={this.state.page} onChange={(page, pageSize) => this.setState({ page: page, pageSize: pageSize })} total={this.state.filteredData.length} />
                 </div>
             </div>
         }

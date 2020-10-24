@@ -36,3 +36,10 @@
  - import users
  - export books
  - import books
+
+ ### Category colors
+  - blue: Bilderbücher
+  - gelb: Erstleser
+  - rot: Fortgeschrittene
+  - grün: Sachbuch
+  - schwarz: Krimmi

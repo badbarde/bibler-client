@@ -16,53 +16,46 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface User
+ * @interface UserIn
  */
-export interface User {
-    /**
-     * 
-     * @type {number}
-     * @memberof User
-     */
-    key: number;
+export interface UserIn {
     /**
      * 
      * @type {string}
-     * @memberof User
+     * @memberof UserIn
      */
     firstname: string;
     /**
      * 
      * @type {string}
-     * @memberof User
+     * @memberof UserIn
      */
     lastname: string;
     /**
      * 
      * @type {string}
-     * @memberof User
+     * @memberof UserIn
      */
     classname?: string;
 }
 
-export function UserFromJSON(json: any): User {
-    return UserFromJSONTyped(json, false);
+export function UserInFromJSON(json: any): UserIn {
+    return UserInFromJSONTyped(json, false);
 }
 
-export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User {
+export function UserInFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserIn {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'key': json['key'],
         'firstname': json['firstname'],
         'lastname': json['lastname'],
         'classname': !exists(json, 'classname') ? undefined : json['classname'],
     };
 }
 
-export function UserToJSON(value?: User | null): any {
+export function UserInToJSON(value?: UserIn | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -71,7 +64,6 @@ export function UserToJSON(value?: User | null): any {
     }
     return {
         
-        'key': value.key,
         'firstname': value.firstname,
         'lastname': value.lastname,
         'classname': value.classname,

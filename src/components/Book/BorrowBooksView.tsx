@@ -4,17 +4,18 @@ import { Book } from "../../models/Book"
 import { viewTypeSubject } from "../TitleBarMenu"
 import { ViewTypes } from "../ViewTypes"
 import { bookCardsSubject } from "./BookCard"
-import { BookCards } from "./BookCards"
 import { BookItem } from "./BookItem"
-import { BooksTable, booksTableSubject } from "./BooksTable"
+import { booksTableSubject } from "./BooksTable"
+import { BorrowBookCards } from "./BorrowBookCards"
+import { BorrowBooksTable } from "./BorrowBooksTable"
 
 interface BookViewState {
     bookViewType: ViewTypes,
     selectedBook: Book | null
 }
-export class BooksView extends React.Component {
+export class BorrowBooksView extends React.Component {
     state: BookViewState = {
-        bookViewType: ViewTypes.CARD,
+        bookViewType: ViewTypes.TABLE,
         selectedBook: null
     }
     viewTypeSub: Subscription | null = null
@@ -27,13 +28,12 @@ export class BooksView extends React.Component {
                 bookViewType: viewType
             })
         })
-        this.bookTableSub = bookCardsSubject.subscribe(book => {
+        this.bookCardSub = bookCardsSubject.subscribe(book => {
             console.log("selected " + book.title)
             this.setState({
                 selectedBook: book
             })
         })
-
         this.bookTableSub = booksTableSubject.subscribe(book => {
             console.log("selected " + book.title)
             this.setState({
@@ -42,15 +42,9 @@ export class BooksView extends React.Component {
         })
     }
     componentWillUnmount(): void {
-        if (this.viewTypeSub != null) {
-            this.viewTypeSub.unsubscribe()
-        }
-        if (this.bookTableSub != null) {
-            this.bookTableSub.unsubscribe()
-        }
-        if (this.bookCardSub != null) {
-            this.bookCardSub.unsubscribe()
-        }
+        this.viewTypeSub?.unsubscribe()
+        this.bookTableSub?.unsubscribe()
+        this.bookCardSub?.unsubscribe()
     }
     render(): JSX.Element {
         const { bookViewType, selectedBook } = this.state
@@ -59,9 +53,9 @@ export class BooksView extends React.Component {
         }
         switch (bookViewType) {
             case ViewTypes.TABLE:
-                return <BooksTable key="BorrowBooksTable"></BooksTable>
+                return <BorrowBooksTable key="BorrowBooksTable"></BorrowBooksTable>
             case ViewTypes.CARD:
-                return <BookCards key="BookCards"></BookCards>
+                return <BorrowBookCards key="BookCards"></BorrowBookCards>
         }
         return <></>
     }

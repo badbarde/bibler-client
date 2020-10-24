@@ -14,8 +14,8 @@ export const userI18N: Map<string, string> = new Map([
     ["key", "Schlüssel"],
     ["firstname", "Vorname"],
     ["lastname", "Nachname"],
-    ["clazz", "Klasse"],
-    ["_class", "Klasse"],
+    ["classname", "Klasse"],
+    ["borrowedBooks", "Bücher ausgeliehen"],
 ])
 export const borrowingUserI18N: Map<string, string> = new Map([
     ["start_date", "Ausleihdatum"],
@@ -23,7 +23,7 @@ export const borrowingUserI18N: Map<string, string> = new Map([
     ["return_date", "Rückgabedatum"],
     ["firstname", "Vorname"],
     ["lastname", "Nachname"],
-    ["clazz", "Klasse"],
+    ["classname", "Klasse"],
     ["key", "Schlüssel",],
     ["author", "Autor",],
     ["category", "Kategorie",],
