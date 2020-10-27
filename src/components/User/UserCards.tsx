@@ -114,7 +114,7 @@ export class UserCards extends React.Component {
                     onChange: page => {
                         console.log(page);
                     },
-                    pageSize: 3,
+                    pageSize: 10,
                 }}
                 dataSource={listData}
                 renderItem={item => {

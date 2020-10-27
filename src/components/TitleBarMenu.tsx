@@ -7,13 +7,13 @@ import { ViewTypes } from "./ViewTypes";
 const { Search } = Input;
 
 
-export const viewTypeSubject = new BehaviorSubject<ViewTypes>(ViewTypes.CARD)
+export const viewTypeSubject = new BehaviorSubject<ViewTypes>(ViewTypes.TABLE)
 
 export const searchFilterSubject = new BehaviorSubject<string>("")
 
 export class TitleBarMenu extends React.Component {
     state = {
-        showAsTable: true,
+        showAsTable: false,
         title: "Bibler",
         subtitle: "Bücherei App"
     }
@@ -52,6 +52,7 @@ export class TitleBarMenu extends React.Component {
                 display: "grid",
                 gridTemplateColumns: "auto 1fr",
             }}>
+                <title>{this.state.title} - {this.state.subtitle}</title>
                 <div>
                     <Space>
                         <Button

@@ -38,9 +38,9 @@ export class AddUsersFileForm extends React.Component {
                     <p>Wähle eine CSV datei mit Benutzern aus, die importiert werden sollen. </p>
                     <p>Stelle sicher, dass die Spalten wie folgt benannt sind:</p>
                     <ul>
-                        <li>fistname </li>
-                        <li>lastname</li>
-                        <li>class</li>
+                        <li>firstname: Pflicht</li>
+                        <li>lastname: Pflicht</li>
+                        <li>classname: Pflicht</li>
                     </ul>
                 </Dragger>
                 <div>

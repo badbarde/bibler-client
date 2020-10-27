@@ -44,6 +44,10 @@ import {
     UserInToJSON,
 } from '../models';
 
+export interface BookCoverExistesMediaExistsBookKeyGetRequest {
+    bookKey: number;
+}
+
 export interface BorrowBookBorrowUserKeyBookKeyPatchRequest {
     userKey: number;
     bookKey: number;
@@ -60,11 +64,7 @@ export interface ExtendBorrowPeriodExtendUserKeyBookKeyPatchRequest {
     duration?: number;
 }
 
-export interface GetBookCoverExistsMediaBookKeyGetRequest {
-    bookKey: number;
-}
-
-export interface GetBookCoverMediaExistsBookKeyGetRequest {
+export interface GetBookCoverMediaBookKeyGetRequest {
     bookKey: number;
 }
 
@@ -97,6 +97,36 @@ export interface ReturnBookReturnUserKeyBookKeyPatchRequest {
  * no description
  */
 export class DefaultBibler extends runtime.BaseAPI {
+
+    /**
+     * Book Cover Existes
+     */
+    async bookCoverExistesMediaExistsBookKeyGetRaw(requestParameters: BookCoverExistesMediaExistsBookKeyGetRequest): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters.bookKey === null || requestParameters.bookKey === undefined) {
+            throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling bookCoverExistesMediaExistsBookKeyGet.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/media/exists/{book_key}`.replace(`{${"book_key"}}`, encodeURIComponent(String(requestParameters.bookKey))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * Book Cover Existes
+     */
+    async bookCoverExistesMediaExistsBookKeyGet(requestParameters: BookCoverExistesMediaExistsBookKeyGetRequest): Promise<string> {
+        const response = await this.bookCoverExistesMediaExistsBookKeyGetRaw(requestParameters);
+        return await response.value();
+    }
 
     /**
      * Borrow Book
@@ -290,11 +320,11 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
-     * Get Book Cover Exists
+     * Get Book Cover
      */
-    async getBookCoverExistsMediaBookKeyGetRaw(requestParameters: GetBookCoverExistsMediaBookKeyGetRequest): Promise<runtime.ApiResponse<object>> {
+    async getBookCoverMediaBookKeyGetRaw(requestParameters: GetBookCoverMediaBookKeyGetRequest): Promise<runtime.ApiResponse<object>> {
         if (requestParameters.bookKey === null || requestParameters.bookKey === undefined) {
-            throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling getBookCoverExistsMediaBookKeyGet.');
+            throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling getBookCoverMediaBookKeyGet.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -312,40 +342,10 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
-     * Get Book Cover Exists
-     */
-    async getBookCoverExistsMediaBookKeyGet(requestParameters: GetBookCoverExistsMediaBookKeyGetRequest): Promise<object> {
-        const response = await this.getBookCoverExistsMediaBookKeyGetRaw(requestParameters);
-        return await response.value();
-    }
-
-    /**
      * Get Book Cover
      */
-    async getBookCoverMediaExistsBookKeyGetRaw(requestParameters: GetBookCoverMediaExistsBookKeyGetRequest): Promise<runtime.ApiResponse<boolean>> {
-        if (requestParameters.bookKey === null || requestParameters.bookKey === undefined) {
-            throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling getBookCoverMediaExistsBookKeyGet.');
-        }
-
-        const queryParameters: runtime.HTTPQuery = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/media/exists/{book_key}`.replace(`{${"book_key"}}`, encodeURIComponent(String(requestParameters.bookKey))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        });
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     * Get Book Cover
-     */
-    async getBookCoverMediaExistsBookKeyGet(requestParameters: GetBookCoverMediaExistsBookKeyGetRequest): Promise<boolean> {
-        const response = await this.getBookCoverMediaExistsBookKeyGetRaw(requestParameters);
+    async getBookCoverMediaBookKeyGet(requestParameters: GetBookCoverMediaBookKeyGetRequest): Promise<object> {
+        const response = await this.getBookCoverMediaBookKeyGetRaw(requestParameters);
         return await response.value();
     }
 
@@ -676,10 +676,36 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * Index
+     */
+    async indexGetRaw(): Promise<runtime.ApiResponse<object>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * Index
+     */
+    async indexGet(): Promise<object> {
+        const response = await this.indexGetRaw();
+        return await response.value();
+    }
+
+    /**
      * check weather a book with the key `book_key` is currently borrowed by anyone
      * Is Borrowed
      */
-    async isBorrowedBookBorrowedBookKeyGetRaw(requestParameters: IsBorrowedBookBorrowedBookKeyGetRequest): Promise<runtime.ApiResponse<object>> {
+    async isBorrowedBookBorrowedBookKeyGetRaw(requestParameters: IsBorrowedBookBorrowedBookKeyGetRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.bookKey === null || requestParameters.bookKey === undefined) {
             throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling isBorrowedBookBorrowedBookKeyGet.');
         }
@@ -695,14 +721,14 @@ export class DefaultBibler extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.TextApiResponse(response) as any;
     }
 
     /**
      * check weather a book with the key `book_key` is currently borrowed by anyone
      * Is Borrowed
      */
-    async isBorrowedBookBorrowedBookKeyGet(requestParameters: IsBorrowedBookBorrowedBookKeyGetRequest): Promise<object> {
+    async isBorrowedBookBorrowedBookKeyGet(requestParameters: IsBorrowedBookBorrowedBookKeyGetRequest): Promise<string> {
         const response = await this.isBorrowedBookBorrowedBookKeyGetRaw(requestParameters);
         return await response.value();
     }

@@ -1,5 +1,8 @@
 start: api
 	npm run-script startWeb
+build: api
+	npm run-script buildWeb
+	cp build/* ../bibler-server/static/
 api:
 	openapi-generator generate \
 	-g typescript-fetch \

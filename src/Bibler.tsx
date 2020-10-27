@@ -18,12 +18,19 @@ import { UsersView } from './components/User/UsersView';
 
 const { Header, Footer, Sider, Content } = Layout;
 
+interface IBibler {
+    name?: string
+}
 interface BiblerState {
     mainContentType: MainContentTypes
     mainContent: ReactElement
     collapsed: boolean
 }
-export class Bibler extends React.Component {
+interface BiblerContext {
+    title: string,
+    subtitle: string
+}
+export class Bibler extends React.Component<IBibler, BiblerState, BiblerContext> {
     state: BiblerState = {
         mainContentType: MainContentTypes.BooksTable,
         collapsed: false,

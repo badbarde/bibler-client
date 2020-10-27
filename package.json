@@ -34,6 +34,7 @@
     "@typescript-eslint/parser": "^3.10.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^4.3.0",
     "css-modules-typescript-loader": "^4.0.0",
     "electron": "^10.1.1",
@@ -42,6 +43,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
     "fork-ts-checker-webpack-plugin": "^5.1.0",
+    "html-webpack-plugin": "^4.5.0",
     "style-loader": "^1.2.1",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.2",
@@ -49,11 +51,12 @@
     "typings-for-css-modules-loader": "^1.7.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.2.0"
   },
   "scripts": {
-    "startWeb": "webpack-dev-server",
-    "buildWeb": "webpack --mode production",
+    "startWeb": "webpack-dev-server --open --config webpack-dev.ts",
+    "buildWeb": "webpack --config webpack-prod.ts",
     "start": "nf start -p 3000",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

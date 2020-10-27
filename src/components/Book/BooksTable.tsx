@@ -110,9 +110,7 @@ export class BooksTable extends React.Component<IBooksTable> {
         console.log(e)
     }
     componentWillUnmount(): void {
-        if (this.searchFilterSub != null) {
-            this.searchFilterSub.unsubscribe()
-        }
+        this.searchFilterSub?.unsubscribe()
     }
     getCategoryColor(value: string): string | undefined {
         const { categoryColors } = this.state

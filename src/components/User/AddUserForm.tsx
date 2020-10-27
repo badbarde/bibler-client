@@ -2,7 +2,7 @@ import { Button, Input, message, Space } from "antd";
 import CSS from "csstype";
 import React from "react";
 import { DefaultBibler } from "../../apis";
-import { UserInFromJSON } from "../../models";
+import { PutUserResponseStatus, UserInFromJSON } from "../../models";
 import { User } from "../../models/User";
 
 const api = new DefaultBibler()
@@ -13,9 +13,10 @@ type addUserFormState = {
 export class AddUserForm extends React.Component<unknown, addUserFormState> {
     state: addUserFormState = {
         record: {
-            firstname: "",
             key: 0,
+            firstname: "",
             lastname: "",
+            classname: "",
         },
         loading: false
     }
@@ -23,6 +24,22 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
         event.preventDefault()
         const key = 'updatable';
         const { record } = this.state
+        let fail = false
+        if (record.firstname == "") {
+            message.error("Vorname darf nicht leer sein")
+            fail = true
+        }
+        if (record.lastname == "") {
+            message.error("Nachname darf nicht leer sein")
+            fail = true
+        }
+        if (record.classname == "") {
+            message.error("Klasse darf nicht leer sein")
+            fail = true
+        }
+        if (fail) {
+            return
+        }
         message.loading({ content: 'Speichern...', key });
         setTimeout(() => {
             message.success({ content: 'Neue Benutzer*in gespeichert!', key, duration: 2 });
@@ -32,6 +49,17 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
         })
         const response = await api.putUserUserPut({ userIn: UserInFromJSON(record) })
         console.log(response)
+        switch (response.status) {
+            case PutUserResponseStatus.Created:
+                message.success("Benutzer wurde gespeichert")
+                break;
+            case PutUserResponseStatus.NotCreated:
+                message.error("Benutzer konnte nicht gespeichert werden")
+                break;
+            default:
+                message.error("Es ist ein Fehler aufgetreten")
+                break;
+        }
         setTimeout(() => this.setState({
             loading: false,
             record: {

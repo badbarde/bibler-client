@@ -3,46 +3,67 @@ import { Button, Divider, Image, message, Modal, Space } from "antd";
 import Search from "antd/lib/input/Search";
 import React from "react";
 import { GiBookCover } from "react-icons/gi";
-import { Subject } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { DefaultBibler } from "../../apis/DefaultBibler";
-import { BorrowResponseModel, BorrowResponseStatus, ExtendingResponseStatus, ReturningResponseStatus } from "../../models";
+import { BorrowResponseStatus, ExtendingResponseStatus, ReturningResponseStatus } from "../../models";
 import { Book } from "../../models/Book";
 import { User } from "../../models/User";
 import { BASE_PATH } from "../../runtime";
-import { Record } from "../BTable";
 import { UserSelectCards, userSelectCardsSubject } from "../User/UserSelectCards";
 
 export interface IBookItem {
+    /**
+     * The displayed book.
+     */
     book: Book,
+    /**
+     * The preselected user borrowing the book.
+     */
     user?: User
 }
 interface BookItemState {
-    selectedUser?: Record
+    /**
+     * User selected from the borrow modal.
+     */
+    selectedUser?: User
+    /**
+     * State of the loading Icon on the borrow button.
+     */
     loading: boolean
-    visible: boolean
-    buttonDisabled: boolean
-    response?: BorrowResponseModel
-    borrowingUser?: User
+    /**
+     * State of the borrow modal.
+     */
+    borrowModalVisible: boolean
+    /**
+     * State of the borrow button.
+     */
+    borrowButtonDisabled: boolean
+    /**
+     * User currently borrowing the displayed book.
+     */
+    borrowingUser?: User | null
+    /**
+     * Flag indicating that the book cant be borrowed.
+     */
     isAlreadyBorrowed: boolean,
+    /**
+     * Flag indicating if a picture for the book exists.
+     */
     mediaExists: boolean
 
 }
 
 const api = new DefaultBibler()
 export const borrowModalSeachFilterSubject = new Subject<string>()
-export class BookItem extends React.Component<IBookItem> {
+export class BookItem extends React.Component<IBookItem, BookItemState> {
     state: BookItemState = {
         loading: false,
-        visible: false,
-        buttonDisabled: false,
+        borrowModalVisible: false,
+        borrowButtonDisabled: false,
         isAlreadyBorrowed: false,
         mediaExists: false
     };
-    usersTableSubscription = userSelectCardsSubject.subscribe(el => {
-        this.setState({
-            selectedUser: el.user
-        })
-    })
+    usersTableSub: Subscription | null = null
     constructor(props: Readonly<IBookItem>) {
         super(props)
         if (props.user != null) {
@@ -50,30 +71,33 @@ export class BookItem extends React.Component<IBookItem> {
         }
     }
 
-    checkBorrowed = async (): Promise<boolean> => {
-        return await api.isBorrowedBookBorrowedBookKeyGet({ bookKey: this.props.book.key }) as unknown as boolean
-    }
     async componentDidMount(): Promise<void> {
-        const mediaExists = await api.getBookCoverExistsMediaBookKeyGet({ bookKey: this.props.book.key })
+        const mediaExists = await api.bookCoverExistesMediaExistsBookKeyGet({ bookKey: this.props.book.key })
+        const borrowed = await api.isBorrowedBookBorrowedBookKeyGet({ bookKey: this.props.book.key })
         this.setState({
-            isAlreadyBorrowed: await this.checkBorrowed(),
-            mediaExists: mediaExists
+            isAlreadyBorrowed: borrowed.replaceAll("\"", "").toLowerCase() == "false" ? false : true,
+            mediaExists: mediaExists.replaceAll("\"", "").toLowerCase() == "false" ? false : true
+        })
+        this.usersTableSub = userSelectCardsSubject.subscribe(el => {
+            this.setState({
+                selectedUser: el.user
+            })
         })
     }
     componentWillUnmount(): void {
-        this.usersTableSubscription.unsubscribe()
+        this.usersTableSub?.unsubscribe()
     }
 
     showBorrowingModal = (): void => {
         this.setState({
-            visible: true,
+            borrowModalVisible: true,
         });
     }
 
     extendBorrowPeriod = async (): Promise<void> => {
         console.log("extend book")
-        if (this.props.user != null) {
-            const resonse = await api.extendBorrowPeriodExtendUserKeyBookKeyPatch({ bookKey: this.props.book.key, userKey: this.props.user.key })
+        if (this.state.borrowingUser != null) {
+            const resonse = await api.extendBorrowPeriodExtendUserKeyBookKeyPatch({ bookKey: this.props.book.key, userKey: this.state.borrowingUser.key })
             switch (resonse.status) {
                 case ExtendingResponseStatus.SuccessfullyExtended:
                     message.success("Buch erfolgreich verlängert bis " + resonse.returnDate)
@@ -87,31 +111,12 @@ export class BookItem extends React.Component<IBookItem> {
             }
         }
     }
-    returnBook = async (): Promise<void> => {
+    returnBookAction = async (): Promise<void> => {
         this.setState({
-            buttonDisabled: true,
+            borrowButtonDisabled: true,
             loading: true
         })
-        if (this.props.user != null) {
-            const response = await api.returnBookReturnUserKeyBookKeyPatch({
-                bookKey: this.props.book.key,
-                userKey: this.props.user.key
-            })
-            console.log(response)
-            if (response != null && response.status == ReturningResponseStatus.SuccessfullyReturned) {
-                setTimeout(() => {
-                    message.success("Das Buch wurde erfolgreich zurück gegeben");
-                    this.setState({
-                        borrowingUser: null,
-                        loading: false,
-                        buttonDisabled: false
-                    });
-                }, 1000);
-            } else {
-                message.error("Es ist ein Problem aufgetreten:" + response.status);
-            }
-        }
-        else if (this.state.borrowingUser != null) {
+        if (this.state.borrowingUser != null) {
             const response = await api.returnBookReturnUserKeyBookKeyPatch({
                 bookKey: this.props.book.key,
                 userKey: this.state.borrowingUser.key
@@ -122,8 +127,9 @@ export class BookItem extends React.Component<IBookItem> {
                     message.success("Das Buch wurde erfolgreich zurück gegeben");
                     this.setState({
                         borrowingUser: null,
+                        isAlreadyBorrowed: false,
                         loading: false,
-                        buttonDisabled: false
+                        borrowButtonDisabled: false
                     });
                 }, 1000);
             } else {
@@ -147,9 +153,8 @@ export class BookItem extends React.Component<IBookItem> {
                     message.success("Das Buch wurde erfolgreich ausgeliehen");
                     this.setState({
                         loading: false,
-                        visible: false,
-                        response: response,
-                        buttonDisabled: false,
+                        borrowModalVisible: false,
+                        borrowButtonDisabled: false,
                         borrowingUser: selectedUser
                     });
                 }, 1000);
@@ -162,7 +167,7 @@ export class BookItem extends React.Component<IBookItem> {
 
     handleCancel = (): void => {
         this.setState({
-            visible: false
+            borrowModalVisible: false,
         });
     };
     onSearch = (): void => {
@@ -174,7 +179,7 @@ export class BookItem extends React.Component<IBookItem> {
         borrowModalSeachFilterSubject.next(searchString)
     }
     render(): JSX.Element {
-        const { visible, loading, selectedUser, borrowingUser, buttonDisabled } = this.state;
+        const { borrowModalVisible: visible, loading, selectedUser, borrowingUser, borrowButtonDisabled: buttonDisabled } = this.state;
         let actions, userLabel
         if (borrowingUser != null) {
             actions = [
@@ -182,7 +187,7 @@ export class BookItem extends React.Component<IBookItem> {
                     key="action Zurückgeben"
                     disabled={buttonDisabled}
                     type="primary"
-                    onClick={this.returnBook}
+                    onClick={this.returnBookAction}
                     loading={loading}
                     shape="round"
                     icon={<GiBookCover />}
@@ -207,7 +212,6 @@ export class BookItem extends React.Component<IBookItem> {
                     key="action Verliehen"
                     disabled={true}
                     type="primary"
-                    onClick={this.showBorrowingModal}
                     loading={false}
                     shape="round"
                     icon={<GiBookCover />}
@@ -260,7 +264,6 @@ export class BookItem extends React.Component<IBookItem> {
                     <Modal
                         visible={visible}
                         title={"Wer möchte " + this.props.book.title + " ausleihen?"}
-                        onOk={this.handleOk}
                         onCancel={this.handleCancel}
                         footer={[
                             <Button key="back" onClick={this.handleCancel}> Abbrechen </Button>,

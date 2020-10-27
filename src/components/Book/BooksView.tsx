@@ -42,15 +42,9 @@ export class BooksView extends React.Component {
         })
     }
     componentWillUnmount(): void {
-        if (this.viewTypeSub != null) {
-            this.viewTypeSub.unsubscribe()
-        }
-        if (this.bookTableSub != null) {
-            this.bookTableSub.unsubscribe()
-        }
-        if (this.bookCardSub != null) {
-            this.bookCardSub.unsubscribe()
-        }
+        this.viewTypeSub?.unsubscribe()
+        this.bookTableSub?.unsubscribe()
+        this.bookCardSub?.unsubscribe()
     }
     render(): JSX.Element {
         const { bookViewType, selectedBook } = this.state

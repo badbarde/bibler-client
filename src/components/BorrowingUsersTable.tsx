@@ -41,7 +41,7 @@ export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
         const data = (await api.getBorrowingUsersUsersBorrowingGet()) as Array<[Record, Record, Record]>
         console.log(data)
         this.setState({
-            data: data.map(el => ({ ...el[0], ...el[1], ...el[2] }))
+            data: data
         })
     }
     async componentDidMount(): Promise<void> {

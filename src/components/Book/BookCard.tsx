@@ -1,6 +1,8 @@
-import { Card, Image } from 'antd';
+import { Card, Image, Tag } from 'antd';
 import React from "react";
 import { Subject } from 'rxjs';
+import { DefaultBibler } from '../../apis/DefaultBibler';
+import { Category } from '../../models';
 import { Book } from "../../models/Book";
 import { BASE_PATH } from '../../runtime';
 import { Record } from "./../types";
@@ -12,15 +14,32 @@ export interface IBookCard {
 }
 type BookCardState = {
     data?: Array<Record>,
-    insertRecord?: Record
+    insertRecord?: Record,
+    categoryColors?: Array<Category>
 }
 
 export const bookCardsSubject = new Subject<Book>()
 const publish = (data: Book) => bookCardsSubject.next(data)
 
+const api = new DefaultBibler()
 export class BookCard extends React.Component<IBookCard, BookCardState> {
     state: BookCardState = {
         data: []
+    }
+    componentDidMount(): void {
+        this.loadCategoryColors()
+    }
+    loadCategoryColors = async (): Promise<void> => {
+        const categories = await api.getCategoryCategoryGet()
+        this.setState({
+            categoryColors: categories
+        })
+    }
+    getCategoryColor(value: string): string | undefined {
+        const { categoryColors } = this.state
+        if (categoryColors != null) {
+            return categoryColors.find(el => el.name == value)?.color
+        }
     }
     render(): JSX.Element {
         const { book } = this.props
@@ -33,7 +52,7 @@ export class BookCard extends React.Component<IBookCard, BookCardState> {
             />}>
             <Meta title={this.props.book.title} description={this.props.book.author} />
             <div ><span>Verlag: </span>{this.props.book.publisher}</div>
-            <div ><span>Kategorie: </span>{this.props.book.category}</div>
+            <div ><span>Kategorie: <Tag color={this.getCategoryColor(this.props.book.category)} >{this.props.book.category}</Tag></span></div>
             <div ><span>ISBN: </span>{this.props.book.isbn}</div>
             <div ><span>Etikett: </span>{this.props.book.shorthand} {this.props.book.number}</div>
 
