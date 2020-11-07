@@ -263,6 +263,7 @@ export class BookItem extends React.Component<IBookItem, BookItemState> {
                     </Space>
                     <Modal
                         visible={visible}
+                        style={{}}
                         title={"Wer möchte " + this.props.book.title + " ausleihen?"}
                         onCancel={this.handleCancel}
                         footer={[
@@ -276,12 +277,17 @@ export class BookItem extends React.Component<IBookItem, BookItemState> {
                             onChange={this.onSearchChanged}
                             onSearch={this.onSearch}
                         ></Search>
-                        <div style={{ marginBlock: "1rem" }}>
+                        <div style={{
+                            marginBlock: "1rem",
+                            overflow: "auto",
+                            height: "350px",
+                            maxHeight: "75wh"
+                        }}>
                             <UserSelectCards key="user-borrow-select"></UserSelectCards>
                         </div>
                     </Modal>
                 </div>
             </div>
-        </div>
+        </div >
     }
 }

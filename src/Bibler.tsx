@@ -53,14 +53,14 @@ export class Bibler extends React.Component<IBibler, BiblerState, BiblerContext>
                         theme="dark"
                     >
                         <Menu.Item
-                            key="Ausleihen"
+                            key="Buch Ausleihen"
                             icon={<GiBookCover />}
                             onClick={(): void => {
                                 this.setState({
                                     mainContent: <BorrowBooksView key={Date.now()}></BorrowBooksView>
                                 })
                             }}>
-                            <span style={{ paddingLeft: ".5rem" }}>{"Ausleihen"}</span>
+                            <span style={{ paddingLeft: ".5rem" }}>{"Buch Ausleihen"}</span>
                         </Menu.Item>
                         <Menu.Item
                             key="Alle Bücher"
@@ -73,29 +73,29 @@ export class Bibler extends React.Component<IBibler, BiblerState, BiblerContext>
                             <span style={{ paddingLeft: ".5rem" }}>{"Alle Bücher"}</span>
                         </Menu.Item>
                         <Menu.Item
-                            key="Zurückgeben"
+                            key="Benutzer"
                             icon={<GiBackwardTime />}
                             onClick={(): void => {
                                 this.setState({
                                     mainContent: <UsersView key={Date.now()}></UsersView>
                                 })
                             }}>
-                            <span style={{ paddingLeft: ".5rem" }}>{"Zurückgeben"}</span>
+                            <span style={{ paddingLeft: ".5rem" }}>{"Benutzer"}</span>
                         </Menu.Item>
                         <Menu.Item
-                            key="Fristen"
+                            key="Ausleihfristen"
                             icon={<GiBackwardTime />}
                             onClick={(): void => {
                                 this.setState({
                                     mainContent: <BorrowingUsersTable key={Date.now()}></BorrowingUsersTable>
                                 })
                             }}>
-                            <span style={{ paddingLeft: ".5rem" }}>{"Fristen"}</span>
+                            <span style={{ paddingLeft: ".5rem" }}>{"Ausleihfristen"}</span>
                         </Menu.Item>
                         <SubMenu
-                            key="Buch hinzufügen"
+                            key="Bücher verwalten"
                             icon={<GiBookPile />}
-                            title={<span style={{ paddingLeft: ".5rem" }}>{"Bücher hinzufügen"}</span>}
+                            title={<span style={{ paddingLeft: ".5rem" }}>{"Bücher verwalten"}</span>}
                         >
                             <Menu.Item
                                 key="5"
@@ -115,9 +115,9 @@ export class Bibler extends React.Component<IBibler, BiblerState, BiblerContext>
                                 }} >Bücherliste</Menu.Item>
                         </SubMenu>
                         <SubMenu
-                            key="Benutzer hinzufügen"
+                            key="Benutzer verwalten"
                             icon={<HiUserAdd />}
-                            title={<span style={{ paddingLeft: ".5rem" }}>{"Benutzer hinzufügen"}</span>}
+                            title={<span style={{ paddingLeft: ".5rem" }}>{"Benutzer verwalten"}</span>}
                         >
                             <Menu.Item
                                 key="7"

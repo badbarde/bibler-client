@@ -90,7 +90,7 @@ export class BooksTable extends React.Component<IBooksTable> {
         if (insertRecord != null) {
             console.log(insertRecord)
             try {
-                const response = await api.dbPutBookBookPut({ book: BookFromJSON(insertRecord) })
+                const response = await api.putBookBookPut({ book: BookFromJSON(insertRecord) })
                 console.log(response)
                 data?.unshift(BookFromJSON(insertRecord) as unknown as Record)
                 this.setState({

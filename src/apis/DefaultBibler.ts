@@ -21,15 +21,30 @@ import {
     BorrowResponseModel,
     BorrowResponseModelFromJSON,
     BorrowResponseModelToJSON,
+    BorrowingUserRecord,
+    BorrowingUserRecordFromJSON,
+    BorrowingUserRecordToJSON,
     Category,
     CategoryFromJSON,
     CategoryToJSON,
+    DeleteBookResponseModel,
+    DeleteBookResponseModelFromJSON,
+    DeleteBookResponseModelToJSON,
+    DeleteUserResponseModel,
+    DeleteUserResponseModelFromJSON,
+    DeleteUserResponseModelToJSON,
     ExtendingResponseModel,
     ExtendingResponseModelFromJSON,
     ExtendingResponseModelToJSON,
     HTTPValidationError,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
+    PatchBookResponseModel,
+    PatchBookResponseModelFromJSON,
+    PatchBookResponseModelToJSON,
+    PatchUserResponseModel,
+    PatchUserResponseModelFromJSON,
+    PatchUserResponseModelToJSON,
     PutBookResponseModel,
     PutBookResponseModelFromJSON,
     PutBookResponseModelToJSON,
@@ -39,6 +54,9 @@ import {
     ReturningResponseModel,
     ReturningResponseModelFromJSON,
     ReturningResponseModelToJSON,
+    User,
+    UserFromJSON,
+    UserToJSON,
     UserIn,
     UserInFromJSON,
     UserInToJSON,
@@ -54,8 +72,8 @@ export interface BorrowBookBorrowUserKeyBookKeyPatchRequest {
     duration?: number;
 }
 
-export interface DbPutBookBookPutRequest {
-    book: Book;
+export interface DeleteUserUserUserKeyDeleteRequest {
+    userKey: number;
 }
 
 export interface ExtendBorrowPeriodExtendUserKeyBookKeyPatchRequest {
@@ -84,6 +102,22 @@ export interface IsBorrowedBookBorrowedBookKeyGetRequest {
     bookKey: number;
 }
 
+export interface PatchBookBookBookKeyDeleteRequest {
+    bookKey: number;
+}
+
+export interface PatchBookBookPatchRequest {
+    book: Book;
+}
+
+export interface PatchUserUserPatchRequest {
+    user: User;
+}
+
+export interface PutBookBookPutRequest {
+    book: Book;
+}
+
 export interface PutUserUserPutRequest {
     userIn: UserIn;
 }
@@ -99,6 +133,7 @@ export interface ReturnBookReturnUserKeyBookKeyPatchRequest {
 export class DefaultBibler extends runtime.BaseAPI {
 
     /**
+     * returns if a book with the key `book_key` exists
      * Book Cover Existes
      */
     async bookCoverExistesMediaExistsBookKeyGetRaw(requestParameters: BookCoverExistesMediaExistsBookKeyGetRequest): Promise<runtime.ApiResponse<string>> {
@@ -121,6 +156,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns if a book with the key `book_key` exists
      * Book Cover Existes
      */
     async bookCoverExistesMediaExistsBookKeyGet(requestParameters: BookCoverExistesMediaExistsBookKeyGetRequest): Promise<string> {
@@ -129,6 +165,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * borrow a book with the key `book_key` for the user `user_key`
      * Borrow Book
      */
     async borrowBookBorrowUserKeyBookKeyPatchRaw(requestParameters: BorrowBookBorrowUserKeyBookKeyPatchRequest): Promise<runtime.ApiResponse<BorrowResponseModel>> {
@@ -159,6 +196,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * borrow a book with the key `book_key` for the user `user_key`
      * Borrow Book
      */
     async borrowBookBorrowUserKeyBookKeyPatch(requestParameters: BorrowBookBorrowUserKeyBookKeyPatchRequest): Promise<BorrowResponseModel> {
@@ -167,35 +205,34 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
-     * Db Put Book
+     * delete a `user` in the list of users
+     * Delete User
      */
-    async dbPutBookBookPutRaw(requestParameters: DbPutBookBookPutRequest): Promise<runtime.ApiResponse<PutBookResponseModel>> {
-        if (requestParameters.book === null || requestParameters.book === undefined) {
-            throw new runtime.RequiredError('book','Required parameter requestParameters.book was null or undefined when calling dbPutBookBookPut.');
+    async deleteUserUserUserKeyDeleteRaw(requestParameters: DeleteUserUserUserKeyDeleteRequest): Promise<runtime.ApiResponse<DeleteUserResponseModel>> {
+        if (requestParameters.userKey === null || requestParameters.userKey === undefined) {
+            throw new runtime.RequiredError('userKey','Required parameter requestParameters.userKey was null or undefined when calling deleteUserUserUserKeyDelete.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
         const response = await this.request({
-            path: `/book`,
-            method: 'PUT',
+            path: `/user/{user_key}`.replace(`{${"user_key"}}`, encodeURIComponent(String(requestParameters.userKey))),
+            method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
-            body: BookToJSON(requestParameters.book),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PutBookResponseModelFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteUserResponseModelFromJSON(jsonValue));
     }
 
     /**
-     * Db Put Book
+     * delete a `user` in the list of users
+     * Delete User
      */
-    async dbPutBookBookPut(requestParameters: DbPutBookBookPutRequest): Promise<PutBookResponseModel> {
-        const response = await this.dbPutBookBookPutRaw(requestParameters);
+    async deleteUserUserUserKeyDelete(requestParameters: DeleteUserUserUserKeyDeleteRequest): Promise<DeleteUserResponseModel> {
+        const response = await this.deleteUserUserUserKeyDeleteRaw(requestParameters);
         return await response.value();
     }
 
@@ -294,6 +331,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all availabled books that are not borrowed by anyone
      * Get Available Books
      */
     async getAvailableBooksBooksAvailableGetRaw(): Promise<runtime.ApiResponse<object>> {
@@ -312,6 +350,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all availabled books that are not borrowed by anyone
      * Get Available Books
      */
     async getAvailableBooksBooksAvailableGet(): Promise<object> {
@@ -320,6 +359,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns the book cover of a book with the key `book_key`
      * Get Book Cover
      */
     async getBookCoverMediaBookKeyGetRaw(requestParameters: GetBookCoverMediaBookKeyGetRequest): Promise<runtime.ApiResponse<object>> {
@@ -342,6 +382,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns the book cover of a book with the key `book_key`
      * Get Book Cover
      */
     async getBookCoverMediaBookKeyGet(requestParameters: GetBookCoverMediaBookKeyGetRequest): Promise<object> {
@@ -350,6 +391,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all books or if `user_key` is specified all  books borrowed by the user with the key `user_key`
      * Get Books
      */
     async getBooksBooksGetRaw(requestParameters: GetBooksBooksGetRequest): Promise<runtime.ApiResponse<object>> {
@@ -372,6 +414,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all books or if `user_key` is specified all  books borrowed by the user with the key `user_key`
      * Get Books
      */
     async getBooksBooksGet(requestParameters: GetBooksBooksGetRequest): Promise<object> {
@@ -464,9 +507,10 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all Books together with the user that borrows it
      * Get Borrowing Users
      */
-    async getBorrowingUsersUsersBorrowingGetRaw(): Promise<runtime.ApiResponse<object>> {
+    async getBorrowingUsersUsersBorrowingGetRaw(): Promise<runtime.ApiResponse<Array<BorrowingUserRecord>>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -478,18 +522,20 @@ export class DefaultBibler extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(BorrowingUserRecordFromJSON));
     }
 
     /**
+     * returns a list of all Books together with the user that borrows it
      * Get Borrowing Users
      */
-    async getBorrowingUsersUsersBorrowingGet(): Promise<object> {
+    async getBorrowingUsersUsersBorrowingGet(): Promise<Array<BorrowingUserRecord>> {
         const response = await this.getBorrowingUsersUsersBorrowingGetRaw();
         return await response.value();
     }
 
     /**
+     * returns a list of all existing categories
      * Get Category
      */
     async getCategoryCategoryGetRaw(): Promise<runtime.ApiResponse<Array<Category>>> {
@@ -508,6 +554,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of all existing categories
      * Get Category
      */
     async getCategoryCategoryGet(): Promise<Array<Category>> {
@@ -544,6 +591,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of users and the amount of books that they have borrowed
      * Get Users
      */
     async getUsersUsersGetRaw(): Promise<runtime.ApiResponse<object>> {
@@ -562,6 +610,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * returns a list of users and the amount of books that they have borrowed
      * Get Users
      */
     async getUsersUsersGet(): Promise<object> {
@@ -734,6 +783,144 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * Delete an existing book with the key `book_key` in the list of existing books
+     * Patch Book
+     */
+    async patchBookBookBookKeyDeleteRaw(requestParameters: PatchBookBookBookKeyDeleteRequest): Promise<runtime.ApiResponse<DeleteBookResponseModel>> {
+        if (requestParameters.bookKey === null || requestParameters.bookKey === undefined) {
+            throw new runtime.RequiredError('bookKey','Required parameter requestParameters.bookKey was null or undefined when calling patchBookBookBookKeyDelete.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/book/{book_key}`.replace(`{${"book_key"}}`, encodeURIComponent(String(requestParameters.bookKey))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteBookResponseModelFromJSON(jsonValue));
+    }
+
+    /**
+     * Delete an existing book with the key `book_key` in the list of existing books
+     * Patch Book
+     */
+    async patchBookBookBookKeyDelete(requestParameters: PatchBookBookBookKeyDeleteRequest): Promise<DeleteBookResponseModel> {
+        const response = await this.patchBookBookBookKeyDeleteRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Updates an existing `book` in the list of existing books
+     * Patch Book
+     */
+    async patchBookBookPatchRaw(requestParameters: PatchBookBookPatchRequest): Promise<runtime.ApiResponse<PatchBookResponseModel>> {
+        if (requestParameters.book === null || requestParameters.book === undefined) {
+            throw new runtime.RequiredError('book','Required parameter requestParameters.book was null or undefined when calling patchBookBookPatch.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/book`,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: BookToJSON(requestParameters.book),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PatchBookResponseModelFromJSON(jsonValue));
+    }
+
+    /**
+     * Updates an existing `book` in the list of existing books
+     * Patch Book
+     */
+    async patchBookBookPatch(requestParameters: PatchBookBookPatchRequest): Promise<PatchBookResponseModel> {
+        const response = await this.patchBookBookPatchRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * update a `user` in the list of users
+     * Patch User
+     */
+    async patchUserUserPatchRaw(requestParameters: PatchUserUserPatchRequest): Promise<runtime.ApiResponse<PatchUserResponseModel>> {
+        if (requestParameters.user === null || requestParameters.user === undefined) {
+            throw new runtime.RequiredError('user','Required parameter requestParameters.user was null or undefined when calling patchUserUserPatch.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/user`,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserToJSON(requestParameters.user),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PatchUserResponseModelFromJSON(jsonValue));
+    }
+
+    /**
+     * update a `user` in the list of users
+     * Patch User
+     */
+    async patchUserUserPatch(requestParameters: PatchUserUserPatchRequest): Promise<PatchUserResponseModel> {
+        const response = await this.patchUserUserPatchRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * inserts a new `book` into the list of existing books
+     * Put Book
+     */
+    async putBookBookPutRaw(requestParameters: PutBookBookPutRequest): Promise<runtime.ApiResponse<PutBookResponseModel>> {
+        if (requestParameters.book === null || requestParameters.book === undefined) {
+            throw new runtime.RequiredError('book','Required parameter requestParameters.book was null or undefined when calling putBookBookPut.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/book`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: BookToJSON(requestParameters.book),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PutBookResponseModelFromJSON(jsonValue));
+    }
+
+    /**
+     * inserts a new `book` into the list of existing books
+     * Put Book
+     */
+    async putBookBookPut(requestParameters: PutBookBookPutRequest): Promise<PutBookResponseModel> {
+        const response = await this.putBookBookPutRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * inserts a new user `user` into the list of existing users
      * Put User
      */
     async putUserUserPutRaw(requestParameters: PutUserUserPutRequest): Promise<runtime.ApiResponse<PutUserResponseModel>> {
@@ -759,6 +946,7 @@ export class DefaultBibler extends runtime.BaseAPI {
     }
 
     /**
+     * inserts a new user `user` into the list of existing users
      * Put User
      */
     async putUserUserPut(requestParameters: PutUserUserPutRequest): Promise<PutUserResponseModel> {

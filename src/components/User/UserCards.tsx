@@ -38,7 +38,7 @@ const api = new DefaultBibler()
 
 export const userCardsSubject = new Subject<ExtendedUser>()
 const publish = (data: ExtendedUser) => userCardsSubject.next(data)
-export class UserCards extends React.Component {
+export class UserCards extends React.Component<unknown, UserCardsState> {
     state: UserCardsState = {
         data: [],
         filteredData: []
@@ -46,14 +46,15 @@ export class UserCards extends React.Component {
     searchFilterSub: Subscription | null = null
     loadData = async (): Promise<void> => {
         const data = (await api.getUsersUsersGet()) as Array<[User, number]>
-        console.log(data)
+        console.log("UserCards loaded:", data)
+        const mappedData = data.map(el => ({ user: el[0], borrowedBooks: el[1] }))
         this.setState({
-            data: data.map(el => ({ user: el[0], borrowedBooks: el[1] }))
+            data: mappedData,
+            filteredData: mappedData
         })
     }
     async componentDidMount(): Promise<void> {
         await this.loadData()
-
         this.searchFilterSub = searchFilterSubject.subscribe(this.filterData)
     }
     filterData = (search: string): void => {

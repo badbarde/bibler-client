@@ -1,5 +1,4 @@
 export const bookI18N: Map<string, string> = new Map([
-    ["self", "Buch",],
     ["key", "Schlüssel",],
     ["author", "Autor",],
     ["category", "Kategorie",],
@@ -10,21 +9,20 @@ export const bookI18N: Map<string, string> = new Map([
     ["title", "Titel"],
 ])
 export const userI18N: Map<string, string> = new Map([
-    ["self", "Benutzer*in"],
-    ["key", "Schlüssel"],
+    ["key", "Benutzer ID"],
     ["firstname", "Vorname"],
     ["lastname", "Nachname"],
     ["classname", "Klasse"],
     ["borrowedBooks", "Bücher ausgeliehen"],
 ])
 export const borrowingUserI18N: Map<string, string> = new Map([
-    ["start_date", "Ausleihdatum"],
-    ["expiration_date", "Rückgabefrist"],
-    ["return_date", "Rückgabedatum"],
+    ["startDate", "Ausleihdatum"],
+    ["expirationDate", "Rückgabefrist"],
+    ["returnDate", "Rückgabedatum"],
     ["firstname", "Vorname"],
     ["lastname", "Nachname"],
     ["classname", "Klasse"],
-    ["key", "Schlüssel",],
+    ["key", "Benutzer ID",],
     ["author", "Autor",],
     ["category", "Kategorie",],
     ["isbn", "ISBN",],

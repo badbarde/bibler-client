@@ -9,8 +9,7 @@ export const userSelectCardsSubject = new Subject<ExtendedUser>()
 export class UserSelectCards extends UserCards {
     borrowModalSeachFilterSub: Subscription | null = null
     async componentDidMount(): Promise<void> {
-        super.componentDidMount()
-        this.searchFilterSub?.unsubscribe()
+        await this.loadData()
         this.borrowModalSeachFilterSub = borrowModalSeachFilterSubject.subscribe(this.filterData)
     }
     componentWillUnmount(): void {

@@ -1,8 +1,9 @@
 import { Table, Tag } from "antd";
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import { Subject } from "rxjs";
 import { DefaultBibler } from "../apis/DefaultBibler";
 import { borrowingUserI18N } from "../i18n";
+import { BorrowingUserRecord } from "../models";
 
 
 export interface IBorrowingUsersTable {
@@ -11,22 +12,21 @@ export interface IBorrowingUsersTable {
 type Record = {
     [index: string]: string | number
 }
-type TableState = {
-    data?: Array<Record>,
+type BorrowingUsersTableState = {
+    data?: Array<BorrowingUserRecord>,
     insertRecord?: Record
 }
 const api = new DefaultBibler()
 
 export const usersTableSubject = new Subject<Record[]>()
 
-export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
-    state: TableState = {
+export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable, BorrowingUsersTableState> {
+    state: BorrowingUsersTableState = {
         data: []
     }
     columnFilter: Array<string> = [
-        "return_date",
-        "expiration_date",
-        "start_date",
+        "expirationDate",
+        "startDate",
         "firstname",
         "lastname",
         "classname",
@@ -38,7 +38,7 @@ export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
         super(props)
     }
     loadData = async (): Promise<void> => {
-        const data = (await api.getBorrowingUsersUsersBorrowingGet()) as Array<[Record, Record, Record]>
+        const data = (await api.getBorrowingUsersUsersBorrowingGet())
         console.log(data)
         this.setState({
             data: data
@@ -46,18 +46,6 @@ export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
     }
     async componentDidMount(): Promise<void> {
         await this.loadData()
-    }
-
-    handleRecordClick = (event: SyntheticEvent, index: number | undefined): void => {
-        console.log("books table record clicked")
-        const { data } = this.state
-        event.preventDefault()
-        console.log(index, event)
-        if (data && index != null) {
-            this.setState({
-                selectedRecord: data[index]
-            })
-        }
     }
     handleInput = (event: React.ChangeEvent<HTMLInputElement>, field: string): void => {
         let { insertRecord } = this.state
@@ -76,10 +64,11 @@ export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
     }
     renderColumns = (text: string, column: string): string | JSX.Element => {
         switch (column) {
-            case "expiration_date":
+            case "startDate":
+            case "expirationDate":
                 if (new Date(text) < new Date())
-                    return <Tag color="red">{text}</Tag>
-                return <Tag color="green">{text}</Tag>
+                    return <Tag color="red">{new Date(text).toLocaleDateString()}</Tag>
+                return <Tag color="green">{new Date(text).toLocaleDateString()}</Tag>
             default:
                 return text
 
@@ -100,15 +89,7 @@ export class BorrowingUsersTable extends React.Component<IBorrowingUsersTable> {
                     render: (text: string) => this.renderColumns(text, el)
                 }))
         }
-        return <Table columns={cols} dataSource={data?.map(el => {
-            el.children = el.borrowed_books
-            return el
-        })} onRow={(record, rowIndex) => {
-            return {
-                onDoubleClick: event => this.handleRecordClick(event, rowIndex),
-                onClick: event => this.handleRecordClick(event, rowIndex),
-            }
-        }}></Table>
+        return <Table columns={cols} dataSource={data} ></Table >
     }
 
 }

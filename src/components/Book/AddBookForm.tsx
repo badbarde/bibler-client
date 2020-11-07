@@ -56,7 +56,17 @@ export class AddBookForm extends React.Component<IAddBookForm, addBookFormState>
         if (fail) {
             return
         }
-        const response = await api.dbPutBookBookPut({ book: BookFromJSON(record) })
+        const cleanedRecord: Book = {
+            key: -1,
+            title: record.title.trim(),
+            author: record.author.trim(),
+            number: record.number.trim(),
+            publisher: record.publisher.trim(),
+            shorthand: record.shorthand.trim(),
+            isbn: record.isbn?.trim(),
+            category: record.category.trim()
+        }
+        const response = await api.putBookBookPut({ book: BookFromJSON(cleanedRecord) })
         switch (response.status) {
             case PutBookResponseStatus.Created:
                 message.success("Buch wurde gespeichert")

@@ -40,6 +40,12 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
         if (fail) {
             return
         }
+        const cleanedRecord: User = {
+            key: -1, //this will be ignored
+            firstname: record.firstname.trim(),
+            lastname: record.lastname.trim(),
+            classname: record.classname?.trim()
+        }
         message.loading({ content: 'Speichern...', key });
         setTimeout(() => {
             message.success({ content: 'Neue Benutzer*in gespeichert!', key, duration: 2 });
@@ -47,7 +53,7 @@ export class AddUserForm extends React.Component<unknown, addUserFormState> {
         this.setState({
             loading: true
         })
-        const response = await api.putUserUserPut({ userIn: UserInFromJSON(record) })
+        const response = await api.putUserUserPut({ userIn: UserInFromJSON(cleanedRecord) })
         console.log(response)
         switch (response.status) {
             case PutUserResponseStatus.Created:
